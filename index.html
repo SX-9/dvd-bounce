@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Signal</title>
+    <style>
+        * {
+            color-scheme: dark;
+        }
+
+        div {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: .5em;
+        }
+
+        body {
+            height: 100vh;
+            margin: 0;
+            cursor: none;
+        }
+    </style>
+</head>
+<body>
+    <div></div>
+    <script>
+        const size = 55;
+        const delay = 1500;
+
+        const tof = () => !!Math.round(Math.random());
+        const rand = (min, max) => Math.round(min + Math.random() * (max - min));
+
+        const div = document.querySelector('div');
+        const { width, height } = {
+            width: window.innerWidth - size,
+            height: window.innerHeight - size,
+        }
+
+        div.style.top = rand(0, height) + 'px';
+        div.style.left = rand(0, width) + 'px';
+
+        let last;
+        setInterval(move, delay);
+        move();
+
+        function move() {
+            if (tof()) {
+                let tob = tof() ? 0 : height;
+                if (last === tob) tob = tof() ? 0 : height;
+                last = tob;
+                div.animate({
+                    top: tob + 'px',
+                    left: rand(0, width) + 'px',
+                }, { duration: delay, fill: 'forwards' });
+            } else {
+                let lor = tof() ? 0 : width;
+                if (last === lor) lor = tof() ? 0 : width;
+                last = lor;
+                div.animate({
+                    top: rand(0, height) + 'px',
+                    left: lor + 'px',
+                }, { duration: delay, fill: 'forwards' });
+            }
+        }
+    </script>
+</body>
+</html>
