@@ -8,14 +8,65 @@
     <style>
         * {
             color-scheme: dark;
+            font-family: monospace;
+        }
+        
+        div#bg {
+            color: #363636;
+            text-shadow: 0 0 10px #303030;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        div {
+        div#i1 {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border: 3px solid #ffffff;
+            background-color: black;
+            border-radius: .5em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        div#i2 {
             position: absolute;
             width: 50px;
             height: 50px;
-            background-color: white;
+            background-color: #808080;
             border-radius: .5em;
+            filter: blur(2.5px);
+        }
+
+        div#i3 {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #242424;
+            border-radius: .5em;
+            filter: blur(5px);
+        }
+
+        span {
+            color: #00dd00;
+            font-size: 1.5em;
+            transform: rotate(90deg);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin: 0;
+        }
+
+        p {
+            font-size: 1.5em;
+            font-weight: 700;
         }
 
         body {
@@ -26,44 +77,112 @@
     </style>
 </head>
 <body>
-    <div></div>
+    <div id="bg">
+        <h1>No Signal</h1>
+        <p>Still trying to load the stuff...</p>
+    </div>
+    <div id="i3"></div>
+    <div id="i2"></div>
+    <div id="i1">
+        <span class="rand">:)</span>
+        <img class="rand" src="https://gifdb.com/images/featured/rick-roll-h2d7puir23see4lq.gif" width="45" height="45">
+    </div>
     <script>
-        const size = 55;
-        const delay = 1500;
+        const params = new URLSearchParams(window.location.search);
 
-        const tof = () => !!Math.round(Math.random());
-        const rand = (min, max) => Math.round(min + Math.random() * (max - min));
+        const delay = 1500, [size, trail, rarity, properties] = [
+            55, 25, params.get('rarity') || 1000 * 60 * 5,
+            { duration: delay, fill: 'forwards' }
+        ];
 
-        const div = document.querySelector('div');
-        const { width, height } = {
-            width: window.innerWidth - size,
-            height: window.innerHeight - size,
-        }
+        const 
+            tof = () => !!Math.round(Math.random()),
+            rand = (min, max) => Math.round(min + Math.random() * (max - min));
 
-        div.style.top = rand(0, height) + 'px';
-        div.style.left = rand(0, width) + 'px';
+        const div = [
+            null,
+            document.getElementById('i1'),
+            document.getElementById('i2'),
+            document.getElementById('i3'),
+        ];
+
+        const contents = document.querySelectorAll('.rand');
+
+        let [ width, height ] = [
+            window.innerWidth - size,
+            window.innerHeight - size,
+        ],
+            topPos = rand(0, height) + 'px',
+            leftPos = rand(0, width) + 'px';
+
+        contents[1].style.display = 'none';
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        window.addEventListener('resize', () => {
+            width = window.innerWidth - size;
+            height = window.innerHeight - size;
+        });
+
+        div.forEach((e, i) => {
+            if (i === 0) return;
+            e.style.top = topPos;
+            e.style.left = leftPos;
+        });
+
 
         let last;
         setInterval(move, delay);
         move();
 
+        setTimeout(() => {
+            show(true);
+            setTimeout(() => {
+                show(false);
+            }, 5000);
+        }, rand(0, rarity));
+
+        function show(bool) {
+            if (bool) {
+                contents[0].style.display = 'none';
+                contents[1].style.display = 'block';
+            } else {
+                contents[0].style.display = 'block';
+                contents[1].style.display = 'none';
+            }
+        }
+
         function move() {
             if (tof()) {
-                let tob = tof() ? 0 : height;
-                if (last === tob) tob = tof() ? 0 : height;
+                let 
+                    tob = tof() ? 0 : height,
+                    randVal = rand(0, width);
+                while (last === tob) {
+                    tob = tof() ? 0 : height;
+                };
                 last = tob;
-                div.animate({
-                    top: tob + 'px',
-                    left: rand(0, width) + 'px',
-                }, { duration: delay, fill: 'forwards' });
+                div.forEach((e, i) => {
+                    if (i === 0) return;
+                    setTimeout(() => e.animate({
+                        top: tob + 'px',
+                        left: randVal + 'px',
+                    }, properties), (i-1) * trail);
+                });
             } else {
-                let lor = tof() ? 0 : width;
-                if (last === lor) lor = tof() ? 0 : width;
+                let 
+                    lor = tof() ? 0 : width,
+                    randVal = rand(0, height);
+                while (last === lor) {
+                    lor = tof() ? 0 : width;
+                };
                 last = lor;
-                div.animate({
-                    top: rand(0, height) + 'px',
-                    left: lor + 'px',
-                }, { duration: delay, fill: 'forwards' });
+                div.forEach((e, i) => {
+                    if (i === 0) return;
+                    setTimeout(() => e.animate({
+                        top: randVal + 'px',
+                        left: lor + 'px',
+                    }, properties), (i-1) * trail);
+                });
             }
         }
     </script>
