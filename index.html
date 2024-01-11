@@ -13,6 +13,7 @@
         }
         
         div#bg {
+            z-index: -3;
             color: #363636;
             text-shadow: 0 0 10px #303030;
             position: fixed;
@@ -37,21 +38,24 @@
         }
 
         div#i2 {
+            z-index: -1;
             position: absolute;
             width: 50px;
             height: 50px;
             background-color: #808080;
             border-radius: .5em;
-            filter: blur(2.5px);
+            filter: blur(5px);
         }
 
         div#i3 {
+            z-index: -2;
             position: absolute;
-            width: 50px;
-            height: 50px;
-            background-color: #242424;
+            width: 45px;
+            height: 45px;
+            margin: 5px;
+            background-color: #ff9900a6;
             border-radius: .5em;
-            filter: blur(5px);
+            filter: blur(7.5px);
         }
 
         span {
@@ -67,6 +71,7 @@
 
         p {
             font-size: 1.5em;
+            margin: 0;
             font-weight: 700;
         }
 
@@ -100,18 +105,18 @@
         <h1>No Signal</h1>
         <p>Trying to load stuff...</p>
     </div>
-    <div id="i3"></div>
-    <div id="i2"></div>
-    <div id="i1">
+    <div id="i1" class="blocks">
         <span class="rand">:)</span>
         <img class="rand" src="https://gifdb.com/images/featured/rick-roll-h2d7puir23see4lq.gif" width="45" height="45">
     </div>
+    <div id="i2" class="blocks"></div>
+    <div id="i3" class="blocks"></div>
     <button></button>
     <script>
         const params = new URLSearchParams(window.location.search);
 
-        const delay = 1500, [size, trail, rarity, properties] = [
-            55, 25, params.get('rarity') * 1000 || 1000 * 60 * 5,
+        const delay = 1500, [size, trail, offset, rarity, corner, properties] = [
+            55, 35, 25, params.get('rarity') * 1000 || 1000 * 60 * 5, params.get('corner') !== "never",
             { duration: delay, fill: 'forwards' }
         ];
 
@@ -121,9 +126,7 @@
 
         const div = [
             null,
-            document.getElementById('i1'),
-            document.getElementById('i2'),
-            document.getElementById('i3'),
+            ...document.querySelectorAll('.blocks'),
         ];
 
         const contents = document.querySelectorAll('.rand');
@@ -173,10 +176,12 @@
         }
 
         function move() {
+            let min = corner ? 0 : offset;
             if (tof()) {
                 let 
                     tob = tof() ? 0 : height,
-                    randVal = rand(0, width);
+                    max = corner ? width : width - offset,
+                    randVal = rand(min, max);
                 while (last === tob) {
                     tob = tof() ? 0 : height;
                 };
@@ -191,7 +196,8 @@
             } else {
                 let 
                     lor = tof() ? 0 : width,
-                    randVal = rand(0, height);
+                    max = corner ? height : height - offset,
+                    randVal = rand(min, max);
                 while (last === lor) {
                     lor = tof() ? 0 : width;
                 };
