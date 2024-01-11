@@ -7,6 +7,7 @@
     <title>No Signal</title>
     <style>
         * {
+            text-align: center;
             color-scheme: dark;
             font-family: monospace;
         }
@@ -69,17 +70,35 @@
             font-weight: 700;
         }
 
+        button {
+            all: unset;
+            display: none;
+        }
+
         body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
             height: 100vh;
             margin: 0;
             cursor: none;
+            overflow: hidden;
         }
     </style>
 </head>
-<body>
+<body
+    onbeforecopy = "return false"
+    ondragstart = "return false" 
+    onselectstart = "return false" 
+    oncontextmenu = "return false" 
+    onselect = "document.selection.empty()" 
+    oncopy = "document.selection.empty()">
     <div id="bg">
         <h1>No Signal</h1>
-        <p>Still trying to load the stuff...</p>
+        <p>Trying to load stuff...</p>
     </div>
     <div id="i3"></div>
     <div id="i2"></div>
@@ -87,11 +106,12 @@
         <span class="rand">:)</span>
         <img class="rand" src="https://gifdb.com/images/featured/rick-roll-h2d7puir23see4lq.gif" width="45" height="45">
     </div>
+    <button></button>
     <script>
         const params = new URLSearchParams(window.location.search);
 
         const delay = 1500, [size, trail, rarity, properties] = [
-            55, 25, params.get('rarity') || 1000 * 60 * 5,
+            55, 25, params.get('rarity') * 1000 || 1000 * 60 * 5,
             { duration: delay, fill: 'forwards' }
         ];
 
@@ -116,7 +136,7 @@
             leftPos = rand(0, width) + 'px';
 
         contents[1].style.display = 'none';
-
+        document.body.onclick = () => document.querySelector('button').focus();
         document.addEventListener('contextmenu', event => event.preventDefault());
 
         window.addEventListener('resize', () => {
