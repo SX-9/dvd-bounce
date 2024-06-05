@@ -6,16 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No Signal</title>
     <style>
-        * {
+        body {
             text-align: center;
-            color-scheme: dark;
+            background-color: black;
             font-family: monospace;
         }
         
         div#bg {
             z-index: -3;
-            color: #363636;
-            text-shadow: 0 0 10px #303030;
+            color: #181818;
             position: fixed;
             width: 100vw;
             height: 100vh;
@@ -23,6 +22,14 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+        }
+        
+        body.white {
+            background-color: white;
+        }
+
+        .white div#bg {
+            color: #dbdbdb;
         }
 
         div#i1 {
@@ -176,7 +183,7 @@
         }
 
         function move() {
-            let min = corner ? 0 : offset;
+            let hitCorner = false, min = corner ? 0 : offset;
             if (tof()) {
                 let 
                     tob = tof() ? 0 : height,
@@ -193,6 +200,7 @@
                         left: randVal + 'px',
                     }, properties), (i-1) * trail);
                 });
+                hitCorner = randVal === 0 || randVal === width;
             } else {
                 let 
                     lor = tof() ? 0 : width,
@@ -209,6 +217,13 @@
                         left: lor + 'px',
                     }, properties), (i-1) * trail);
                 });
+                hitCorner = randVal === 0 || randVal === height;
+            }
+
+            if (hitCorner) {
+                setTimeout(() => document.body.classList.add('white'), delay / 2);
+            } else {
+                setTimeout(() => document.body.classList.remove('white'), delay / 2);
             }
         }
     </script>
